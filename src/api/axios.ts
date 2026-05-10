@@ -8,4 +8,17 @@ api.interceptors.request.use((config) => {
   return config
 })
 
+// 401 처리
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem('token')
+      window.location.href = '/login'
+    }
+
+    return Promise.reject(error);
+  }
+);
+
 export default api

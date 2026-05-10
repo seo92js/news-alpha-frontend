@@ -8,55 +8,30 @@ interface ModalProps {
 }
 
 export default function Modal({ isOpen, onClose, title, children }: ModalProps) {
-    if (!isOpen) return null
+  if (!isOpen) return null
 
-    return (
-        <div
+  return (
+    <div
+      onClick={onClose}
+      className="fixed inset-0 bg-[rgba(0,0,0,0.6)] flex items-center justify-center z-[100]"
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="bg-surface border border-border rounded-2xl p-8 w-full max-w-[480px] flex flex-col gap-5"
+      >
+        <div className="flex items-center justify-between">
+          <h2 className="text-[18px] font-bold text-text-primary">
+            {title}
+          </h2>
+          <button
             onClick={onClose}
-            style={{
-                position: 'fixed',
-                inset: 0,
-                backgroundColor: 'rgba(0,0,0,0.6)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                zIndex: 100,
-            }}
-        >
-            <div
-                onClick={(e) => e.stopPropagation()}
-                style={{
-                    background: 'var(--surface)',
-                    border: '1px solid var(--border)',
-                    borderRadius: '16px',
-                    padding: '32px',
-                    width: '100%',
-                    maxWidth: '480px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '20px',
-                }}
-            >
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 700, color: 'var(--text-primary)' }}>
-                        {title}
-                    </h2>
-                    <button
-                        onClick={onClose}
-                        style={{
-                            background: 'none',
-                            border: 'none',
-                            color: 'var(--text-muted)',
-                            fontSize: '20px',
-                            cursor: 'pointer',
-                            padding: '4px',
-                        }}
-                    >
-                        ✕
-                    </button>
-                </div>
-                {children}
-            </div>
+            className="bg-none border-none text-text-muted text-[20px] cursor-pointer p-1"
+          >
+            ✕
+          </button>
         </div>
-    )
+        {children}
+      </div>
+    </div>
+  )
 }

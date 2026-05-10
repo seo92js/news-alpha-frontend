@@ -1,17 +1,17 @@
 @import "tailwindcss";
 
-:root {
-  --bg: #0F0F10;
-  --surface: #1A1A1C;
-  --border: #2A2A2E;
-  --text-primary: #F3F3F3;
-  --text-muted: rgba(243, 243, 243, 0.55);
-  --accent: #F5A623;
-  --accent-hover: #F7B84B;
-  --accent-glow: rgba(245, 166, 35, 0.15);
-  --input-bg: #0F0F10;
-  --error: #FF5555;
-  --success: #4ade80;
+@theme {
+  --color-bg: #0F0F10;
+  --color-surface: #1A1A1C;
+  --color-border: #2A2A2E;
+  --color-text-primary: #F3F3F3;
+  --color-text-muted: rgba(243, 243, 243, 0.55);
+  --color-accent: #F5A623;
+  --color-accent-hover: #F7B84B;
+  --color-accent-glow: rgba(245, 166, 35, 0.15);
+  --color-input-bg: #0F0F10;
+  --color-error: #FF5555;
+  --color-success: #4ade80;
 }
 
 * {
@@ -21,8 +21,8 @@
 }
 
 body {
-  background-color: var(--bg);
-  color: var(--text-primary);
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
   font-family: 'Geist', 'Inter', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
@@ -33,12 +33,6 @@ body {
 }
 
 @keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }

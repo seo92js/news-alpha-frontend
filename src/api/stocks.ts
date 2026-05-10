@@ -5,7 +5,7 @@ export const fetchStocks = (): Promise<Stock[]> =>
   api.get<Stock[]>('/stocks').then(r => r.data)
 
 export const fetchStockMeta = (): Promise<StockMeta[]> =>
-    api.get<StockMeta[]>('/stocks/meta').then(r => r.data)
+  api.get<StockMeta[]>('/stocks/meta').then(r => r.data)
 
 export const addStock = (data: StockSaveRequest): Promise<Stock> =>
   api.post<Stock>('/stocks', data).then(r => r.data)

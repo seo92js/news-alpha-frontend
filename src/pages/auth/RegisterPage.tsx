@@ -53,118 +53,79 @@ export default function RegisterPage() {
       await signup({ email: data.email, password: data.password, nickname: data.nickname })
       setSuccessMessage('회원가입이 완료되었습니다! 로그인 페이지로 이동합니다.')
       timerRef.current = setTimeout(() => navigate('/login'), 1500)
-    } catch (err) {
+    }
+    catch (err) {
       if (axios.isAxiosError(err)) {
         const msg = (err.response?.data as { message?: string })?.message
         setServerError(msg ?? '오류가 발생했습니다')
-      } else {
+      }
+      else {
         setServerError('오류가 발생했습니다')
       }
-    } finally {
+    }
+    finally {
       setIsLoading(false)
     }
   }
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        backgroundColor: 'var(--bg)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '24px',
-      }}
-    >
-      <div
-        style={{
-          maxWidth: '400px',
-          width: '100%',
-          animation: 'fadeInUp 300ms ease-out',
-        }}
-      >
-        <Card>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-            {/* Header */}
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '8px' }}>
-                <span style={{ fontSize: '22px', color: 'var(--text-primary)', fontWeight: 700, letterSpacing: '-0.5px' }}>News</span>
-                <span style={{
-                  fontSize: '11px', fontWeight: 600, color: 'var(--bg)',
-                  background: 'var(--accent)', borderRadius: '4px', padding: '2px 6px', letterSpacing: '1px',
-                }}>ALPHA</span>
+      <div className="min-h-screen bg-bg flex items-center justify-center p-6">
+        <div className="max-w-[400px] w-full animate-[fadeInUp_300ms_ease-out]">
+          <Card>
+            <div className="flex flex-col gap-6">
+              <div className="text-center">
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  <span className="text-[22px] text-text-primary font-bold tracking-[-0.5px]">News</span>
+                  <span className="text-[11px] font-semibold text-bg bg-accent rounded px-[6px] py-[2px] tracking-[1px]">ALPHA</span>
+                </div>
+                <p className="text-[14px] text-text-muted">새 계정 만들기</p>
               </div>
-              <p style={{ fontSize: '14px', color: 'var(--text-muted)' }}>
-                새 계정 만들기
+
+              <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+                {successMessage && (
+                    <p className="text-[14px] text-success">{successMessage}</p>
+                )}
+                <Input
+                  label="닉네임"
+                  type="text"
+                  error={errors.nickname?.message}
+                  {...register('nickname')}
+                />
+                <Input
+                  label="이메일"
+                  type="email"
+                  error={errors.email?.message}
+                  {...register('email')}
+                />
+                <Input
+                  label="비밀번호"
+                  type="password"
+                  error={errors.password?.message}
+                  {...register('password')}
+                />
+                <Input
+                  label="비밀번호 확인"
+                  type="password"
+                  error={errors.confirmPassword?.message}
+                  {...register('confirmPassword')}
+                />
+                {serverError && (
+                    <p className="text-[14px] text-error">{serverError}</p>
+                )}
+                <Button type="submit" fullWidth loading={isLoading}>
+                  회원가입
+                </Button>
+              </form>
+
+              <p className="text-center text-[14px] text-text-muted">
+                이미 계정이 있으신가요?{' '}
+                <Link to="/login" className="text-accent no-underline font-semibold">
+                  로그인
+                </Link>
               </p>
             </div>
-
-            {/* Form */}
-            <form
-              onSubmit={handleSubmit(onSubmit)}
-              style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}
-            >
-              {successMessage && (
-                <p style={{ fontSize: '14px', color: 'var(--success)', margin: 0 }}>
-                  {successMessage}
-                </p>
-              )}
-
-              <Input
-                label="닉네임"
-                type="text"
-                error={errors.nickname?.message}
-                {...register('nickname')}
-              />
-              <Input
-                label="이메일"
-                type="email"
-                error={errors.email?.message}
-                {...register('email')}
-              />
-              <Input
-                label="비밀번호"
-                type="password"
-                error={errors.password?.message}
-                {...register('password')}
-              />
-              <Input
-                label="비밀번호 확인"
-                type="password"
-                error={errors.confirmPassword?.message}
-                {...register('confirmPassword')}
-              />
-
-              {serverError && (
-                <p style={{ fontSize: '14px', color: 'var(--error)', margin: 0 }}>
-                  {serverError}
-                </p>
-              )}
-
-              <Button type="submit" fullWidth loading={isLoading}>
-                회원가입
-              </Button>
-            </form>
-
-            {/* Footer */}
-            <p
-              style={{
-                textAlign: 'center',
-                fontSize: '14px',
-                color: 'var(--text-muted)',
-              }}
-            >
-              이미 계정이 있으신가요?{' '}
-              <Link
-                to="/login"
-                style={{ color: 'var(--accent)', textDecoration: 'none', fontWeight: 600 }}
-              >
-                로그인
-              </Link>
-            </p>
-          </div>
-        </Card>
+          </Card>
+        </div>
       </div>
-    </div>
   )
 }

@@ -48,57 +48,35 @@ export default function LoginPage() {
       const res = await login(data)
       setAuth(res.token, { email: res.email, role: res.role })
       navigate('/')
-    } catch (err) {
+    }
+    catch (err) {
       if (axios.isAxiosError(err)) {
         const msg = (err.response?.data as { message?: string })?.message
         setServerError(msg ?? '오류가 발생했습니다')
-      } else {
+      }
+      else {
         setServerError('오류가 발생했습니다')
       }
-    } finally {
+    }
+    finally {
       setIsLoading(false)
     }
   }
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        backgroundColor: 'var(--bg)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '24px',
-      }}
-    >
-      <div
-        style={{
-          maxWidth: '400px',
-          width: '100%',
-          animation: 'fadeInUp 300ms ease-out',
-        }}
-      >
+    <div className="min-h-screen bg-bg flex items-center justify-center p-6">
+      <div className="max-w-[400px] w-full animate-[fadeInUp_300ms_ease-out]">
         <Card>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-            {/* Header */}
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '8px' }}>
-                <span style={{ fontSize: '22px', color: 'var(--text-primary)', fontWeight: 700, letterSpacing: '-0.5px' }}>News</span>
-                <span style={{
-                  fontSize: '11px', fontWeight: 600, color: 'var(--bg)',
-                  background: 'var(--accent)', borderRadius: '4px', padding: '2px 6px', letterSpacing: '1px',
-                }}>ALPHA</span>
+          <div className="flex flex-col gap-6">
+            <div className="text-center">
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <span className="text-[22px] text-text-primary font-bold tracking-[-0.5px]">News</span>
+                <span className="text-[11px] font-semibold text-bg bg-accent rounded px-[6px] py-[2px] tracking-[1px]">ALPHA</span>
               </div>
-              <p style={{ fontSize: '14px', color: 'var(--text-muted)' }}>
-                만나서 반갑습니다
-              </p>
+              <p className="text-[14px] text-text-muted">만나서 반갑습니다</p>
             </div>
 
-            {/* Form */}
-            <form
-              onSubmit={handleSubmit(onSubmit)}
-              style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}
-            >
+            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
               <Input
                 label="이메일"
                 type="email"
@@ -111,58 +89,28 @@ export default function LoginPage() {
                 error={errors.password?.message}
                 {...register('password')}
               />
-
               {serverError && (
-                <p style={{ fontSize: '14px', color: 'var(--error)', margin: 0 }}>
-                  {serverError}
-                </p>
+                  <p className="text-[14px] text-error">{serverError}</p>
               )}
-
               <Button type="submit" fullWidth loading={isLoading}>
                 로그인
               </Button>
             </form>
 
-            {/* Divider */}
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-              }}
-            >
-              <div style={{ flex: 1, height: '1px', backgroundColor: 'var(--border)' }} />
-              <span style={{ fontSize: '13px', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>
-                또는
-              </span>
-              <div style={{ flex: 1, height: '1px', backgroundColor: 'var(--border)' }} />
+            <div className="flex items-center gap-3">
+              <div className="flex-1 h-px bg-border" />
+              <span className="text-[13px] text-text-muted whitespace-nowrap">또는</span>
+              <div className="flex-1 h-px bg-border" />
             </div>
 
-            {/* Google login */}
-            <Button
-              type="button"
-              variant="secondary"
-              fullWidth
-              disabled
-              style={{ gap: '10px' }}
-            >
+            <Button type="button" variant="secondary" fullWidth disabled>
               <GoogleIcon />
               Google로 계속하기
             </Button>
 
-            {/* Footer */}
-            <p
-              style={{
-                textAlign: 'center',
-                fontSize: '14px',
-                color: 'var(--text-muted)',
-              }}
-            >
+            <p className="text-center text-[14px] text-text-muted">
               계정이 없으신가요?{' '}
-              <Link
-                to="/register"
-                style={{ color: 'var(--accent)', textDecoration: 'none', fontWeight: 600 }}
-              >
+              <Link to="/register" className="text-accent no-underline font-semibold">
                 회원가입
               </Link>
             </p>

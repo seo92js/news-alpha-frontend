@@ -1,4 +1,4 @@
-import type { Signal } from '../../types/signal'
+import type {Signal} from '../../types/signal'
 
 interface SignalCardProps {
   signal: Signal
@@ -14,215 +14,110 @@ function formatDetectedAt(iso: string): string {
   return `${month}월 ${day}일 ${hh}:${mm}`
 }
 
-function ScoreBadge({ score }: { score: number }) {
+function ScoreBadge({score}: { score: number }) {
   return (
-    <span
-      style={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: '3px',
-        fontSize: '13px',
-        fontWeight: 700,
-        color: 'var(--accent)',
-      }}
-    >
+      <span className="inline-flex items-center gap-[3px] text-[13px] font-bold text-accent">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="12"
         height="12"
         viewBox="0 0 24 24"
-        fill="var(--accent)"
+        fill="var(--color-accent)"
         aria-hidden="true"
       >
-        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
       </svg>
-      {score.toFixed(1)}
+        {score.toFixed(1)}
     </span>
   )
 }
 
-function KeywordTag({ keyword }: { keyword: string }) {
+function KeywordTag({keyword}: { keyword: string }) {
   return (
     <span
-      style={{
-        display: 'inline-block',
-        padding: '2px 8px',
-        borderRadius: '20px',
-        backgroundColor: 'var(--accent-glow)',
-        border: '1px solid rgba(245,166,35,0.35)',
-        color: 'var(--accent)',
-        fontSize: '11px',
-        fontWeight: 600,
-        letterSpacing: '0.01em',
-      }}
+      className="inline-block px-2 py-[2px] rounded-[20px] bg-accent-glow border border-[rgba(245,166,35,0.35)] text-accent text-[11px] font-semibold tracking-[0.01em]"
     >
       {keyword}
     </span>
   )
 }
 
-function CompactSignalCard({ signal }: { signal: Signal }) {
+function CompactSignalCard({signal}: { signal: Signal }) {
   return (
-    <div
-      style={{
-        background: 'var(--surface)',
-        border: '1px solid var(--border)',
-        borderRadius: '12px',
-        padding: '12px 16px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        gap: '12px',
-        minWidth: 0,
-      }}
-    >
-      <span
-        style={{
-          fontSize: '13px',
-          fontWeight: 600,
-          color: 'var(--text-primary)',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-          whiteSpace: 'nowrap',
-          flex: 1,
-        }}
-        title={signal.title}
-      >
-        {signal.title}
-      </span>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0 }}>
-        <ScoreBadge score={signal.score} />
-        <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-          기사 {signal.relatedNewsCount}건
+      <div
+        className="bg-surface border border-border rounded-xl px-4 py-3 flex items-center justify-between gap-3 min-w-0">
+        <span
+          className="text-[13px] font-semibold text-text-primary overflow-hidden text-ellipsis whitespace-nowrap flex-1"
+          title={signal.title}
+        >
+          {signal.title}
         </span>
+        <div className="flex items-center gap-[10px] shrink-0">
+          <ScoreBadge score={signal.score}/>
+          <span className="text-[12px] text-text-muted">
+            기사 {signal.relatedNewsCount}건
+          </span>
+        </div>
       </div>
-    </div>
   )
 }
 
-function FullSignalCard({ signal }: { signal: Signal }) {
+function FullSignalCard({signal}: { signal: Signal }) {
   return (
-    <div
-      style={{
-        background: 'var(--surface)',
-        border: '1px solid var(--border)',
-        borderRadius: '12px',
-        padding: '20px 24px',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '14px',
-      }}
-    >
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: '8px',
-          flexWrap: 'wrap',
-        }}
-      >
-        <KeywordTag keyword={signal.keyword} />
-        <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+    <div className="bg-surface border border-border rounded-xl px-6 py-5 flex flex-col gap-[14px]">
+      <div className="flex items-center justify-between gap-2 flex-wrap">
+        <KeywordTag keyword={signal.keyword}/>
+        <span className="text-[11px] text-text-muted">
           {formatDetectedAt(signal.detectedAt)} 탐지
         </span>
       </div>
 
-      <p
-        style={{
-          margin: 0,
-          fontSize: '15px',
-          fontWeight: 700,
-          color: 'var(--text-primary)',
-          lineHeight: 1.45,
-        }}
-      >
+      <p className="text-[15px] font-bold text-text-primary leading-[1.45]">
         {signal.title}
       </p>
 
-      <p
-        style={{
-          margin: 0,
-          fontSize: '13px',
-          color: 'var(--text-muted)',
-          lineHeight: 1.65,
-        }}
-      >
+      <p className="text-[13px] text-text-muted leading-[1.65]">
         {signal.summary}
       </p>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-        <ScoreBadge score={signal.score} />
-        <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+      <div className="flex items-center gap-[14px]">
+        <ScoreBadge score={signal.score}/>
+        <span className="text-[12px] text-text-muted">
           기사 {signal.relatedNewsCount}건
         </span>
       </div>
 
-      {signal.evidences.length > 0 && (
-        <div
-          style={{
-            borderTop: '1px solid var(--border)',
-            paddingTop: '12px',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '6px',
-          }}
-        >
-          <span
-            style={{
-              fontSize: '11px',
-              fontWeight: 600,
-              color: 'var(--text-muted)',
-              textTransform: 'uppercase',
-              letterSpacing: '0.06em',
-              marginBottom: '2px',
-            }}
-          >
-            근거 뉴스
-          </span>
-          {signal.evidences.map((ev) => (
-            <a
-              key={ev.newsId}
-              href={ev.url ?? undefined}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ display: 'flex', alignItems: 'baseline', gap: '8px', textDecoration: 'none' }}
-            >
-              <span
-                style={{
-                  flexShrink: 0,
-                  width: '16px',
-                  height: '16px',
-                  borderRadius: '50%',
-                  background: 'var(--accent-glow)',
-                  border: '1px solid rgba(245,166,35,0.3)',
-                  fontSize: '10px',
-                  fontWeight: 700,
-                  color: 'var(--accent)',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  lineHeight: 1,
-                }}
+        {signal.evidences.length > 0 && (
+            <div className="border-t border-border pt-3 flex flex-col gap-[6px]">
+
+              <span className="text-[11px] font-semibold text-text-muted uppercase tracking-[0.06em] mb-[2px]">
+                근거 뉴스
+              </span>
+              {signal.evidences.map((ev) => (
+
+              <a
+                key={ev.newsId}
+                href={ev.url ?? undefined}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-baseline gap-2 no-underline"
               >
+              <span className="shrink-0 w-4 h-4 rounded-full bg-accent-glow border border-[rgba(245,166,35,0.3)] text-[10px] font-bold text-accent inline-flex items-center justify-center leading-none">
                 {ev.rankOrder}
               </span>
-              <span
-                style={{ fontSize: '13px', color: 'var(--text-primary)', lineHeight: 1.4, transition: 'color 150ms' }}
-                onMouseEnter={(e) => { (e.currentTarget as HTMLSpanElement).style.color = 'var(--accent)' }}
-                onMouseLeave={(e) => { (e.currentTarget as HTMLSpanElement).style.color = 'var(--text-primary)' }}
-              >
+              <span className="text-[13px] text-text-primary leading-[1.4] transition-colors duration-150 hover:text-accent">
                 {ev.title}
               </span>
-            </a>
-          ))}
-        </div>
-      )}
+              </a>
+              ))}
+
+            </div>
+        )}
     </div>
   )
 }
 
-export default function SignalCard({ signal, compact = false }: SignalCardProps) {
-  if (compact) return <CompactSignalCard signal={signal} />
-  return <FullSignalCard signal={signal} />
+export default function SignalCard({signal, compact = false}: SignalCardProps) {
+  if (compact) return <CompactSignalCard signal={signal}/>
+  return <FullSignalCard signal={signal}/>
 }
