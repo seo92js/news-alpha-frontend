@@ -1,4 +1,5 @@
 import type {Signal} from '../../types/signal'
+import { Zap } from 'lucide-react'
 
 interface SignalCardProps {
   signal: Signal
@@ -17,16 +18,7 @@ function formatDetectedAt(iso: string): string {
 function ScoreBadge({score}: { score: number }) {
   return (
       <span className="inline-flex items-center gap-[3px] text-[13px] font-bold text-accent">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="12"
-        height="12"
-        viewBox="0 0 24 24"
-        fill="var(--color-accent)"
-        aria-hidden="true"
-      >
-        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
-      </svg>
+      <Zap size={12} fill="var(--color-accent)" stroke="var(--color-accent)" />
         {score.toFixed(1)}
     </span>
   )
