@@ -5,10 +5,10 @@ import { z } from 'zod'
 import { useNavigate, Link } from 'react-router-dom'
 import axios from 'axios'
 
-import Card from '../../components/ui/Card'
-import Input from '../../components/ui/Input'
-import Button from '../../components/ui/Button'
-import { signup } from '../../api/auth'
+import Card from '@/components/ui/card'
+import Input from '@/components/ui/input'
+import Button from '@/components/ui/button'
+import { signup } from '@/api/auth'
 
 const schema = z
   .object({
@@ -112,7 +112,7 @@ export default function RegisterPage() {
                 {serverError && (
                     <p className="text-[14px] text-error">{serverError}</p>
                 )}
-                <Button type="submit" fullWidth loading={isLoading}>
+                <Button type="submit" fullWidth loading={isLoading} className="h-12 text-[15px]">
                   회원가입
                 </Button>
               </form>

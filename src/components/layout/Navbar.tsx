@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-import { useAuthStore } from '../../stores/authStore'
-import Button from '../ui/Button'
-import StockDrawer from '../ui/StockDrawer'
-import AddStockModal from '../../features/stocks/AddStockModal'
+import { useAuthStore } from '@/stores/authStore'
+import Button from '@/components/ui/button'
+import StockDrawer from '@/features/stocks/StockDrawer'
+import AddStockModal from '@/features/stocks/AddStockModal'
 
 export default function Navbar() {
     const navigate = useNavigate()
@@ -19,7 +19,7 @@ export default function Navbar() {
 
     return (
         <>
-          <header className="sticky top-0 z-[100] bg-bg border-b border-border">
+          <header className="sticky top-0 z-40 bg-bg border-b border-border">
             <div className="max-w-[800px] mx-auto px-6 h-14 flex items-center justify-between">
               <Link to="/" className="flex items-center gap-2 no-underline">
                 <span className="text-[18px] font-bold text-text-primary tracking-[-0.5px]">
@@ -40,7 +40,7 @@ export default function Navbar() {
                     <span className="text-[14px] text-text-muted">
                       {user.email}
                     </span>
-                    <Button variant="secondary" size="sm" onClick={handleLogout}>
+                    <Button variant="outline" size="sm" onClick={handleLogout}>
                       로그아웃
                     </Button>
                   </div>

@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { fetchStockMeta } from '../../api/stocks'
+import { fetchStockMeta } from '@/api/stocks'
 
 export function useStockMeta(enabled: boolean) {
     return useQuery({

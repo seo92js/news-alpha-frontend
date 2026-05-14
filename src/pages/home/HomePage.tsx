@@ -1,6 +1,6 @@
-import { useSignals } from '../../features/signals/useSignals'
-import Navbar from '../../components/layout/Navbar'
-import SignalCard from '../../features/signals/SignalCard'
+import { useSignals } from '@/features/signals/useSignals'
+import Navbar from '@/components/layout/Navbar'
+import SignalCard from '@/features/signals/SignalCard'
 
 const TOP_SIGNAL_COUNT = 3
 

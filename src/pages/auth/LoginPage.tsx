@@ -5,11 +5,11 @@ import { z } from 'zod'
 import { useNavigate, Link } from 'react-router-dom'
 import axios from 'axios'
 
-import Card from '../../components/ui/Card'
-import Input from '../../components/ui/Input'
-import Button from '../../components/ui/Button'
-import { login } from '../../api/auth'
-import { useAuthStore } from '../../stores/authStore'
+import Card from '@/components/ui/card'
+import Input from '@/components/ui/input'
+import Button from '@/components/ui/button'
+import { login } from '@/api/auth'
+import { useAuthStore } from '@/stores/authStore'
 
 const schema = z.object({
   email: z.string().email('올바른 이메일 형식이 아닙니다'),
@@ -92,7 +92,7 @@ export default function LoginPage() {
               {serverError && (
                   <p className="text-[14px] text-error">{serverError}</p>
               )}
-              <Button type="submit" fullWidth loading={isLoading}>
+              <Button type="submit" fullWidth loading={isLoading} className="h-12 text-[15px]">
                 로그인
               </Button>
             </form>
@@ -103,7 +103,7 @@ export default function LoginPage() {
               <div className="flex-1 h-px bg-border" />
             </div>
 
-            <Button type="button" variant="secondary" fullWidth disabled>
+            <Button type="button" variant="outline" fullWidth disabled>
               <GoogleIcon />
               Google로 계속하기
             </Button>

@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
-import Navbar from '../../components/layout/Navbar'
-import SignalCard from '../../features/signals/SignalCard'
-import Input from '../../components/ui/Input'
-import Button from '../../components/ui/Button'
-import { useStocks } from '../../features/stocks/useStocks'
-import { useSignals } from '../../features/signals/useSignals'
-import { useAddKeyword } from '../../features/stocks/useAddKeyword'
-import type { StockKeyword } from '../../types/stock'
+import Navbar from '@/components/layout/Navbar'
+import SignalCard from '@/features/signals/SignalCard'
+import Input from '@/components/ui/input'
+import Button from '@/components/ui/button'
+import { useStocks } from '@/features/stocks/useStocks'
+import { useSignals } from '@/features/signals/useSignals'
+import { useAddKeyword } from '@/features/stocks/useAddKeyword'
+import type { StockKeyword } from '@/types/stock'
 
 export default function StockDetailPage() {
   const { id } = useParams<{ id: string }>()
@@ -181,7 +181,7 @@ export default function StockDetailPage() {
                 <Button size="sm" onClick={handleAddKeyword} className={keywordError ? 'mt-[26px]' : ''}>
                   추가
                 </Button>
-                <Button size="sm" variant="secondary" onClick={handleToggleAdding} className={keywordError ? 'mt-[26px]' : ''}>
+                <Button size="sm" variant="outline" onClick={handleToggleAdding} className={keywordError ? 'mt-[26px]' : ''}>
                   취소
                 </Button>
               </div>

@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { fetchSignals } from '../../api/signals'
+import { fetchSignals } from '@/api/signals'
 
 export function useSignals() {
   return useQuery({

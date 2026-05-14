@@ -1,4 +1,4 @@
-import type {Signal} from '../../types/signal'
+import type { Signal } from '@/types/signal'
 import { Zap } from 'lucide-react'
 
 interface SignalCardProps {

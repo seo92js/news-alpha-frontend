@@ -1,12 +1,12 @@
 import React, { useState, useRef } from 'react'
-import Modal from '../../components/ui/Modal'
-import Input from '../../components/ui/Input'
-import Button from '../../components/ui/Button'
+import Modal from '@/components/ui/modal'
+import Input from '@/components/ui/input'
+import Button from '@/components/ui/button'
 import { useAddStock } from './useAddStock'
 import { useAddKeyword } from './useAddKeyword'
 import { useStocks } from './useStocks'
 import { useStockMeta } from './useStockMeta'
-import type { Stock, StockMeta } from '../../types/stock'
+import type { Stock, StockMeta } from '@/types/stock'
 
 interface AddStockModalProps {
   isOpen: boolean
