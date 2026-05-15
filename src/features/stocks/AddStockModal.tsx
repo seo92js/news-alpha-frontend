@@ -117,7 +117,7 @@ export default function AddStockModal({ isOpen, onClose }: AddStockModalProps) {
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={handleClose} title="추가">
+    <Modal isOpen={isOpen} onClose={handleClose}>
       <div className="flex mb-2">
         <button
           onClick={() => setActiveTab('stock')}

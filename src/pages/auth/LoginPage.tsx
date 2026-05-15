@@ -66,7 +66,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-bg flex items-center justify-center p-6">
       <div className="max-w-[400px] w-full animate-[fadeInUp_300ms_ease-out]">
-        <Card>
+        <Card className="p-9">
           <div className="flex flex-col gap-6">
             <div className="text-center">
               <div className="flex items-center justify-center gap-2 mb-2">

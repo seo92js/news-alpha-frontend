@@ -19,17 +19,19 @@
   --color-success: #4ade80;
 }
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+@layer base {
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
 
-body {
-  background-color: var(--color-bg);
-  color: var(--color-text-primary);
-  font-family: 'Geist', 'Inter', system-ui, sans-serif;
-  -webkit-font-smoothing: antialiased;
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-text-primary);
+    font-family: 'Geist', 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
 }
 
 @keyframes spin {

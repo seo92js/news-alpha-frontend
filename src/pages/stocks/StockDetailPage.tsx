@@ -126,72 +126,68 @@ export default function StockDetailPage() {
           </div>
 
           {signalsOpen && (
-              <div className="flex flex-col gap-3">
-                {relatedSignals.length === 0 ? (
-                    <p className="text-[14px] text-text-muted text-center py-6">
-                      관련 시그널이 없습니다
-                    </p>
-                ) : (
-                    relatedSignals.map((signal) => (
-                      <SignalCard key={signal.id} signal={signal} compact={false} />
-                    ))
-                )}
-              </div>
+            <div className="flex flex-col gap-3">
+              {relatedSignals.length === 0 ? (
+                <p className="text-[14px] text-text-muted text-center py-6">
+                  관련 시그널이 없습니다
+                </p>
+              ) : (
+                relatedSignals.map((signal) => (
+                  <SignalCard key={signal.id} signal={signal} compact={false} />
+                ))
+              )}
+            </div>
           )}
         </section>
 
         <section>
-          <h2 className="text-[16px] font-semibold text-text-primary mb-3">
-            뉴스 수집 키워드
-          </h2>
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-[16px] font-semibold text-text-primary">
+              뉴스 수집 키워드
+            </h2>
+            {!isAdding && <Button size="sm" onClick={handleToggleAdding}>키워드 추가</Button>}
+          </div>
 
           <div className="flex flex-wrap gap-2 mb-3">
             {keywords.length === 0 ? (
-                <p className="text-[14px] text-text-muted">등록된 키워드가 없습니다</p>
+              <p className="text-[14px] text-text-muted">등록된 키워드가 없습니다</p>
             ) : (
-                keywords.map((kw) => (
-                  <span
-                    key={kw.id}
-                    className={`inline-flex items-center text-[13px] font-medium px-[10px] py-1 rounded-md border ${kw.enabled ? 'border-accent text-accent bg-[rgba(245,166,35,0.08)]' : 'border-border text-text-muted bg-transparent opacity-50'}`}
-                  >
-                    {kw.keyword}
-                  </span>
-                ))
+              keywords.map((kw) => (
+                <span
+                  key={kw.id}
+                  className={`inline-flex items-center text-[13px] font-medium px-[10px] py-1 rounded-md border ${kw.enabled ? 'border-accent text-accent bg-[rgba(245,166,35,0.08)]' : 'border-border text-text-muted bg-transparent opacity-50'}`}
+                >
+                  {kw.keyword}
+                </span>
+              ))
             )}
           </div>
 
-          {isAdding ? (
-              <div className="flex gap-2 items-start">
-                <div className="flex-1">
-                  <Input
-                    placeholder="새 키워드 입력"
-                    value={newKeyword}
-                    onChange={(e) => {
-                      setNewKeyword(e.currentTarget.value)
-                      if (keywordError) setKeywordError('')
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') handleAddKeyword()
-                      if (e.key === 'Escape') handleToggleAdding()
-                    }}
-                    error={keywordError}
-                    autoFocus
-                  />
-                </div>
-                <Button size="sm" onClick={handleAddKeyword} className={keywordError ? 'mt-[26px]' : ''}>
-                  추가
-                </Button>
-                <Button size="sm" variant="outline" onClick={handleToggleAdding} className={keywordError ? 'mt-[26px]' : ''}>
-                  취소
-                </Button>
+          {isAdding && (
+            <div className="flex gap-2 items-start">
+              <div className="flex-1">
+                <Input
+                  placeholder="추가하려는 키워드 입력"
+                  value={newKeyword}
+                  onChange={(e) => {
+                    setNewKeyword(e.currentTarget.value)
+                    if (keywordError) setKeywordError('')
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') handleAddKeyword()
+                    if (e.key === 'Escape') handleToggleAdding()
+                  }}
+                  error={keywordError}
+                  autoFocus
+                />
               </div>
-          ) : (
-              <button
-                onClick={handleToggleAdding}
-                className="bg-none border border-border rounded-md text-text-muted text-[13px] px-3 py-1 cursor-pointer transition-colors duration-150 hover:text-text-primary hover:border-text-muted"
-              >
-                + 키워드 추가
-              </button>
+              <Button size="sm" onClick={handleAddKeyword} className={keywordError ? 'mt-[26px]' : ''}>
+                추가
+              </Button>
+              <Button size="sm" variant="outline" onClick={handleToggleAdding} className={keywordError ? 'mt-[26px]' : ''}>
+                취소
+              </Button>
+            </div>
           )}
         </section>
       </main>
