@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import Navbar from '@/components/layout/Navbar'
 import SignalCard from '@/features/signals/SignalCard'
@@ -6,8 +6,9 @@ import Input from '@/components/ui/input'
 import Button from '@/components/ui/button'
 import { useStocks } from '@/features/stocks/useStocks'
 import { useSignals } from '@/features/signals/useSignals'
+import { useKeywords } from '@/features/stocks/useKeywords'
 import { useAddKeyword } from '@/features/stocks/useAddKeyword'
-import type { StockKeyword } from '@/types/stock'
+import SignalDetailModal from '@/features/signals/SignalDetailModal'
 
 export default function StockDetailPage() {
   const { id } = useParams<{ id: string }>()
@@ -15,19 +16,17 @@ export default function StockDetailPage() {
 
   const { data: stocks = [], isLoading } = useStocks()
   const { data: signals = [] } = useSignals()
+  const { data: keywords = [] } = useKeywords(stockId)
   const { mutate: addKeywordMutate } = useAddKeyword(stockId)
 
   const [signalsOpen, setSignalsOpen] = useState(false)
-  const [addedKeywords, setAddedKeywords] = useState<StockKeyword[]>([])
   const [isAdding, setIsAdding] = useState(false)
   const [newKeyword, setNewKeyword] = useState('')
   const [keywordError, setKeywordError] = useState('')
 
-  const stock = stocks.find((s) => s.id === stockId)
+  const [selectedSignalId, setSelectedSignalId] = useState<number | null>(null)
 
-  useEffect(() => {
-    setAddedKeywords([])
-  }, [stockId])
+  const stock = stocks.find((s) => s.id === stockId)
 
   if (isLoading || !stock) {
     return (
@@ -38,9 +37,8 @@ export default function StockDetailPage() {
     )
   }
 
-  const keywords = [...stock.keywords, ...addedKeywords]
   const relatedSignals = signals.filter(signal =>
-    stock.keywords.some(kw => kw.keyword === signal.keyword)
+    keywords.some(kw => kw.keyword === signal.keyword)
   )
 
   const handleToggleAdding = () => {
@@ -60,23 +58,17 @@ export default function StockDetailPage() {
       return
     }
 
-    const optimistic: StockKeyword = {
-      id: Date.now(),
-      stockId,
-      keyword: trimmed,
-      enabled: true,
-      createdAt: new Date().toISOString(),
-    }
-    setAddedKeywords((prev) => [...prev, optimistic])
     setNewKeyword('')
     setKeywordError('')
 
     addKeywordMutate(
       { keyword: trimmed },
       {
-        onSuccess: () => { setAddedKeywords([]) },
+        onSuccess: () => {
+          setNewKeyword('')
+          setIsAdding(false)
+        },
         onError: () => {
-          setAddedKeywords((prev) => prev.filter((kw) => kw.id !== optimistic.id))
           setKeywordError('키워드 추가에 실패했습니다')
         },
       }
@@ -133,7 +125,12 @@ export default function StockDetailPage() {
                 </p>
               ) : (
                 relatedSignals.map((signal) => (
-                  <SignalCard key={signal.id} signal={signal} compact={false} />
+                  <SignalCard
+                      key={signal.id}
+                      signal={signal}
+                      compact={false}
+                      onClick={() => setSelectedSignalId(signal.id)}
+                  />
                 ))
               )}
             </div>
@@ -191,6 +188,12 @@ export default function StockDetailPage() {
           )}
         </section>
       </main>
+
+      <SignalDetailModal
+          isOpen={selectedSignalId !== null}
+          onClose={() => setSelectedSignalId(null)}
+          signalId={selectedSignalId}
+      />
     </div>
   )
 }

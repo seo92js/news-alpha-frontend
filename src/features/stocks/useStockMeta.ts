@@ -3,7 +3,7 @@ import { fetchStockMeta } from '@/api/stocks'
 
 export function useStockMeta(enabled: boolean) {
     return useQuery({
-        queryKey: ['stockMeta'],
+        queryKey: ['stocks', 'meta'],
         queryFn: fetchStockMeta,
         enabled,
         staleTime: 60 * 60 * 1000,

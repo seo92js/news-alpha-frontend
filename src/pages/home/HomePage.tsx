@@ -1,11 +1,14 @@
-import { useSignals } from '@/features/signals/useSignals'
+import {useState} from 'react'
 import Navbar from '@/components/layout/Navbar'
 import SignalCard from '@/features/signals/SignalCard'
+import { useSignals } from '@/features/signals/useSignals'
+import SignalDetailModal from '@/features/signals/SignalDetailModal'
 
 const TOP_SIGNAL_COUNT = 3
 
 export default function HomePage() {
   const { data: signals = [], isLoading: signalsLoading } = useSignals()
+  const [selectedSignalId, setSelectedSignalId] = useState<number | null>(null)
 
   const topSignals = [...signals]
     .sort((a, b) => b.score - a.score)
@@ -33,12 +36,23 @@ export default function HomePage() {
           ) : (
               <div className="flex flex-col gap-2">
                 {topSignals.map((signal) => (
-                    <SignalCard key={signal.id} signal={signal} compact />
+                    <SignalCard
+                        key={signal.id}
+                        signal={signal}
+                        compact
+                        onClick={() => setSelectedSignalId(signal.id)}
+                    />
                 ))}
               </div>
           )}
         </section>
       </main>
+
+      <SignalDetailModal
+          isOpen={selectedSignalId !== null}
+          onClose={() => setSelectedSignalId(null)}
+          signalId={selectedSignalId}
+      />
     </div>
   )
 }

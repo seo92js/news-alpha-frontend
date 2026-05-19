@@ -2,10 +2,10 @@ import React, { useState, useRef } from 'react'
 import Modal from '@/components/ui/modal'
 import Input from '@/components/ui/input'
 import Button from '@/components/ui/button'
-import { useAddStock } from './useAddStock'
-import { useAddKeyword } from './useAddKeyword'
-import { useStocks } from './useStocks'
-import { useStockMeta } from './useStockMeta'
+import { useAddStock } from '@/features/stocks/useAddStock'
+import { useAddKeyword } from '@/features/stocks/useAddKeyword'
+import { useStocks } from '@/features/stocks/useStocks'
+import { useStockMeta } from '@/features/stocks/useStockMeta'
 import type { Stock, StockMeta } from '@/types/stock'
 
 interface AddStockModalProps {
@@ -47,7 +47,7 @@ export default function AddStockModal({ isOpen, onClose }: AddStockModalProps) {
   const { data: metaList = [] } = useStockMeta(isOpen)
   metaRef.current = metaList
   const { mutate: addStock, isPending: isAddingStock } = useAddStock()
-  const { mutate: addKeyword, isPending: isAddingKeyword } = useAddKeyword(selectedStockId ?? 0)
+  const { mutate: addKeyword, isPending: isAddingKeyword } = useAddKeyword(selectedStockId!)
 
   const handleSelect = (item: StockMeta) => {
     setSelected(item)

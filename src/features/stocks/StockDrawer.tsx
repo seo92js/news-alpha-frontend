@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { useStocks } from '../../features/stocks/useStocks'
+import { useStocks } from '@/features/stocks/useStocks'
 import {
   Sheet,
   SheetContent,

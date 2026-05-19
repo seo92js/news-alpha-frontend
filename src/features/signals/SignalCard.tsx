@@ -1,18 +1,11 @@
 import type { Signal } from '@/types/signal'
 import { Zap } from 'lucide-react'
+import { formatDate } from '@/lib/utils'
 
 interface SignalCardProps {
   signal: Signal
   compact?: boolean
-}
-
-function formatDetectedAt(iso: string): string {
-  const d = new Date(iso)
-  const month = d.getMonth() + 1
-  const day = d.getDate()
-  const hh = String(d.getHours()).padStart(2, '0')
-  const mm = String(d.getMinutes()).padStart(2, '0')
-  return `${month}월 ${day}일 ${hh}:${mm}`
+  onClick?: () => void
 }
 
 function ScoreBadge({score}: { score: number }) {
@@ -34,10 +27,12 @@ function KeywordTag({keyword}: { keyword: string }) {
   )
 }
 
-function CompactSignalCard({signal}: { signal: Signal }) {
+function CompactSignalCard({ signal, onClick }: { signal: Signal; onClick?: ()=> void }) {
   return (
       <div
-        className="bg-surface border border-border rounded-xl px-4 py-3 flex items-center justify-between gap-3 min-w-0">
+        className="bg-surface border border-border rounded-xl px-4 py-3 flex items-center justify-between gap-3 min-w-0"
+        onClick={onClick}
+      >
         <span
           className="text-[13px] font-semibold text-text-primary overflow-hidden text-ellipsis whitespace-nowrap flex-1"
           title={signal.title}
@@ -54,13 +49,16 @@ function CompactSignalCard({signal}: { signal: Signal }) {
   )
 }
 
-function FullSignalCard({signal}: { signal: Signal }) {
+function FullSignalCard({ signal, onClick }: { signal: Signal; onClick?: ()=> void }) {
   return (
-    <div className="bg-surface border border-border rounded-xl px-6 py-5 flex flex-col gap-[14px]">
+    <div
+        className="bg-surface border border-border rounded-xl px-6 py-5 flex flex-col gap-[14px]"
+        onClick={onClick}
+    >
       <div className="flex items-center justify-between gap-2 flex-wrap">
         <KeywordTag keyword={signal.keyword}/>
         <span className="text-[11px] text-text-muted">
-          {formatDetectedAt(signal.detectedAt)} 탐지
+          {formatDate(signal.detectedAt)} 탐지
         </span>
       </div>
 
@@ -109,7 +107,7 @@ function FullSignalCard({signal}: { signal: Signal }) {
   )
 }
 
-export default function SignalCard({signal, compact = false}: SignalCardProps) {
-  if (compact) return <CompactSignalCard signal={signal}/>
-  return <FullSignalCard signal={signal}/>
+export default function SignalCard({ signal, compact = false, onClick }: SignalCardProps) {
+  if (compact) return <CompactSignalCard signal={signal} onClick={onClick}/>
+  return <FullSignalCard signal={signal} onClick={onClick}/>
 }
