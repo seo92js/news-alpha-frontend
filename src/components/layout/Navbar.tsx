@@ -4,14 +4,12 @@ import { useAuthStore } from '@/stores/authStore'
 import Button from '@/components/ui/button'
 import { getDisplayEmail } from '@/lib/utils'
 import StockDrawer from '@/features/stocks/StockDrawer'
-import AddStockModal from '@/features/stocks/AddStockModal'
 
 export default function Navbar() {
   const navigate = useNavigate()
   const user = useAuthStore((s) => s.user)
   const clearAuth = useAuthStore((s) => s.clearAuth)
   const [drawerOpen, setDrawerOpen] = useState(false)
-  const [modalOpen, setModalOpen] = useState(false)
 
   const handleLogout = () => {
     clearAuth()
@@ -52,12 +50,6 @@ export default function Navbar() {
       <StockDrawer
         isOpen={drawerOpen}
         onClose={() => setDrawerOpen(false)}
-        onAddClick={() => { setDrawerOpen(false); setModalOpen(true) }}
-      />
-
-      <AddStockModal
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
       />
     </>
   )

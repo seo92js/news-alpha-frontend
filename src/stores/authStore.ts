@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import type { MemberInfo } from '../types/auth'
+import type { MemberInfo } from '@/types/auth'
 
 interface AuthState {
   token: string | null
