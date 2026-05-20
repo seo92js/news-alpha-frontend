@@ -30,3 +30,28 @@ export interface StockSaveRequest {
 export interface StockKeywordSaveRequest {
   keyword: string
 }
+
+export interface StockSignalSummary {
+  signalId: number
+  title: string
+  summary: string
+  eventTypeLabel: string
+  sentimentLabel: string
+  confidence: number
+  investorSummary: string
+  score: number
+  relatedNewsCount: number
+  detectedAt: string
+}
+
+export interface StockLatestReport {
+  stockId: number
+  stockName: string
+  ticker: string
+  market: string
+  reportDate: string
+  signalCount: number
+  report: string
+  generatedAt: string
+  signals: StockSignalSummary[]
+}

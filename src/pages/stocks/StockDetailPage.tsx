@@ -1,5 +1,6 @@
-import { useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
+import { Trash2 } from 'lucide-react'
 import Navbar from '@/components/layout/Navbar'
 import SignalCard from '@/features/signals/SignalCard'
 import Input from '@/components/ui/input'
@@ -8,15 +9,21 @@ import { useStocks } from '@/features/stocks/useStocks'
 import { useSignals } from '@/features/signals/useSignals'
 import { useKeywords } from '@/features/stocks/useKeywords'
 import { useAddKeyword } from '@/features/stocks/useAddKeyword'
+import { useDeleteKeyword } from '@/features/stocks/useDeleteKeyword'
+import { useStockReport } from '@/features/stocks/useStockReport'
+import { formatDate } from '@/lib/utils'
 
 export default function StockDetailPage() {
   const { id } = useParams<{ id: string }>()
   const stockId = Number(id)
+  const navigate = useNavigate()
 
   const { data: stocks = [], isLoading } = useStocks()
   const { data: signals = [] } = useSignals()
   const { data: keywords = [] } = useKeywords(stockId)
   const { mutate: addKeywordMutate } = useAddKeyword(stockId)
+  const { mutate: deleteKeyword } = useDeleteKeyword(stockId)
+  const { data: report } = useStockReport(stockId)
 
   const [signalsOpen, setSignalsOpen] = useState(true)
   const [isAdding, setIsAdding] = useState(false)
@@ -25,11 +32,27 @@ export default function StockDetailPage() {
 
   const stock = stocks.find((s) => s.id === stockId)
 
-  if (isLoading || !stock) {
+  useEffect(() => {
+    if (!isLoading && !stock) {
+      const timer = setTimeout(() => navigate('/'), 2000)
+      return () => clearTimeout(timer)
+    }
+  }, [isLoading, stock])
+
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-bg">
         <Navbar />
         <p className="text-center p-12 text-text-muted text-[14px]">불러오는 중...</p>
+      </div>
+    )
+  }
+
+  if (!stock) {
+    return (
+      <div className="min-h-screen bg-bg">
+        <Navbar />
+        <p className="text-center p-12 text-text-muted text-[14px]">존재하지 않는 종목입니다</p>
       </div>
     )
   }
@@ -99,9 +122,15 @@ export default function StockDetailPage() {
                   keywords.map((kw) => (
                     <span
                       key={kw.id}
-                      className={`inline-flex items-center text-[13px] font-medium px-[10px] py-1 rounded-md border ${kw.enabled ? 'border-accent text-accent bg-[rgba(245,166,35,0.08)]' : 'border-border text-text-muted bg-transparent opacity-50'}`}
+                      className={`inline-flex items-center gap-1.5 text-[13px] font-medium px-[10px] py-1 rounded-md border ${kw.enabled ? 'border-accent text-accent bg-[rgba(245,166,35,0.08)]' : 'border-border text-text-muted bg-transparent opacity-50'}`}
                     >
                       {kw.keyword}
+                      <button
+                        onClick={() => deleteKeyword(kw.id)}
+                        className="hover:text-red-400 transition-colors cursor-pointer"
+                      >
+                        <Trash2 size={11} />
+                      </button>
                     </span>
                   ))
                 )}
@@ -140,11 +169,24 @@ export default function StockDetailPage() {
           <h2 className="text-[16px] font-semibold text-text-primary mb-3">
             오늘의 리포트
           </h2>
-          <div className="bg-surface border border-border rounded-2xl p-6">
-            <p className="text-[14px] text-text-muted text-center py-4">
-              오늘 리포트가 아직 생성되지 않았습니다
-            </p>
-          </div>
+          {report ? (
+            <div className="bg-surface border border-border rounded-2xl p-6 flex flex-col gap-4">
+              <div className="flex items-center justify-between">
+                <span className="text-[12px] text-text-muted">{report.reportDate} 기준</span>
+                <span className="text-[12px] text-text-muted">시그널 {report.signalCount}건 반영</span>
+              </div>
+              <p className="text-[14px] text-text-primary leading-[1.8] whitespace-pre-wrap">
+                {report.report}
+              </p>
+              <span className="text-[11px] text-text-muted">{formatDate(report.generatedAt)} 생성</span>
+            </div>
+          ) : (
+            <div className="bg-surface border border-border rounded-2xl p-6">
+              <p className="text-[14px] text-text-muted text-center py-4">
+                오늘 리포트가 아직 생성되지 않았습니다
+              </p>
+            </div>
+          )}
         </section>
 
         <section className="mb-8">

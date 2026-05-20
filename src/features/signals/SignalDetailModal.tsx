@@ -42,7 +42,7 @@ function EvidenceItem({ evidence }: { evidence: SignalEvidenceDetail }) {
       )}
       {evidence.publishedAt && (
         <span className="text-[11px] text-text-muted pl-6">
-          {evidence.publishedAt}
+          {formatDate(evidence.publishedAt)} 발행
         </span>
       )}
     </a>

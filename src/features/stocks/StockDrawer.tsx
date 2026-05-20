@@ -1,9 +1,12 @@
 import { useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Trash2 } from 'lucide-react'
 import { useStocks } from '@/features/stocks/useStocks'
 import { useStockMeta } from '@/features/stocks/useStockMeta'
 import { useAddStock } from '@/features/stocks/useAddStock'
 import { useAddKeyword } from '@/features/stocks/useAddKeyword'
+import { useDeleteStock } from '@/features/stocks/useDeleteStock'
+import { useDeleteKeyword } from '@/features/stocks/useDeleteKeyword'
 import { useKeywords } from '@/features/stocks/useKeywords'
 import {
   Sheet,
@@ -60,6 +63,8 @@ export default function StockDrawer({ isOpen, onClose }: StockDrawerProps) {
   const [newKeyword, setNewKeyword] = useState('')
   const [keywordError, setKeywordError] = useState('')
   const { mutate: addKeyword, isPending: isKeywordPending } = useAddKeyword(selectedStockId ?? 0)
+  const { mutate: deleteKeyword } = useDeleteKeyword(selectedStockId ?? 0)
+  const { mutate: deleteStock } = useDeleteStock()
   const { data: selectedStockKeywords = [] } = useKeywords(selectedStockId ?? 0)
 
   const selectedStock = stocks.find((s) => s.id === selectedStockId)
@@ -212,7 +217,15 @@ export default function StockDrawer({ isOpen, onClose }: StockDrawerProps) {
                         <span className="text-[15px] font-semibold text-text-primary">{stock.name}</span>
                         <span className="text-[11px] text-muted-foreground">{stock.ticker} · {stock.market}</span>
                       </div>
-                      <span className="text-[11px] text-muted-foreground shrink-0">키워드 {stock.keywords.length}개</span>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span className="text-[11px] text-muted-foreground">키워드 {stock.keywords.length}개</span>
+                        <button
+                          onClick={(e) => { e.stopPropagation(); deleteStock(stock.id, { onSuccess: () => navigate('/') }) }}
+                          className="text-text-muted hover:text-red-400 transition-colors cursor-pointer"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -272,9 +285,15 @@ export default function StockDrawer({ isOpen, onClose }: StockDrawerProps) {
                           {selectedStockKeywords.map((kw) => (
                             <span
                               key={kw.id}
-                              className={`inline-flex items-center text-[13px] font-medium px-[10px] py-1 rounded-md border ${kw.enabled ? 'border-accent text-accent bg-[rgba(245,166,35,0.08)]' : 'border-border text-text-muted bg-transparent opacity-50'}`}
+                              className={`inline-flex items-center gap-1.5 text-[13px] font-medium px-[10px] py-1 rounded-md border ${kw.enabled ? 'border-accent text-accent bg-[rgba(245,166,35,0.08)]' : 'border-border text-text-muted bg-transparent opacity-50'}`}
                             >
                               {kw.keyword}
+                              <button
+                                onClick={() => deleteKeyword(kw.id)}
+                                className="hover:text-red-400 transition-colors cursor-pointer"
+                              >
+                                <Trash2 size={11} />
+                              </button>
                             </span>
                           ))}
                         </div>

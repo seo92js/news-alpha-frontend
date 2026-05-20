@@ -5,6 +5,7 @@ export function useKeywords(stockId: number) {
   return useQuery({
     queryKey: ['stocks', stockId, 'keywords'],
     queryFn: () => fetchKeywords(stockId),
+    enabled: !!stockId,
     staleTime: 60 * 1000,
   })
 }
