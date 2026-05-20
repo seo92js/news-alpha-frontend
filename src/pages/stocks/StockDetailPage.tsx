@@ -8,7 +8,6 @@ import { useStocks } from '@/features/stocks/useStocks'
 import { useSignals } from '@/features/signals/useSignals'
 import { useKeywords } from '@/features/stocks/useKeywords'
 import { useAddKeyword } from '@/features/stocks/useAddKeyword'
-import SignalDetailModal from '@/features/signals/SignalDetailModal'
 
 export default function StockDetailPage() {
   const { id } = useParams<{ id: string }>()
@@ -19,12 +18,10 @@ export default function StockDetailPage() {
   const { data: keywords = [] } = useKeywords(stockId)
   const { mutate: addKeywordMutate } = useAddKeyword(stockId)
 
-  const [signalsOpen, setSignalsOpen] = useState(false)
+  const [signalsOpen, setSignalsOpen] = useState(true)
   const [isAdding, setIsAdding] = useState(false)
   const [newKeyword, setNewKeyword] = useState('')
   const [keywordError, setKeywordError] = useState('')
-
-  const [selectedSignalId, setSelectedSignalId] = useState<number | null>(null)
 
   const stock = stocks.find((s) => s.id === stockId)
 
@@ -90,7 +87,53 @@ export default function StockDetailPage() {
                 {stock.ticker} · {stock.market}
               </span>
             </div>
+            <div className="flex flex-col gap-2 items-end w-3/5">
+              <div className="flex items-center gap-3 pt-1">
+                <h2 className="text-[16px] font-semibold text-text-primary">뉴스 수집 키워드</h2>
+                {!isAdding && <Button size="sm" onClick={handleToggleAdding}>추가</Button>}
+              </div>
+              <div className="flex flex-wrap gap-2 justify-end">
+                {keywords.length === 0 ? (
+                  <p className="text-[14px] text-text-muted">등록된 키워드가 없습니다</p>
+                ) : (
+                  keywords.map((kw) => (
+                    <span
+                      key={kw.id}
+                      className={`inline-flex items-center text-[13px] font-medium px-[10px] py-1 rounded-md border ${kw.enabled ? 'border-accent text-accent bg-[rgba(245,166,35,0.08)]' : 'border-border text-text-muted bg-transparent opacity-50'}`}
+                    >
+                      {kw.keyword}
+                    </span>
+                  ))
+                )}
+              </div>
+            </div>
           </div>
+          {isAdding && (
+            <div className="flex gap-2 items-start mt-3">
+              <div className="flex-1">
+                <Input
+                  placeholder="추가하려는 키워드 입력"
+                  value={newKeyword}
+                  onChange={(e) => {
+                    setNewKeyword(e.currentTarget.value)
+                    if (keywordError) setKeywordError('')
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') handleAddKeyword()
+                    if (e.key === 'Escape') handleToggleAdding()
+                  }}
+                  error={keywordError}
+                  autoFocus
+                />
+              </div>
+              <Button size="sm" onClick={handleAddKeyword} className={keywordError ? 'mt-[26px]' : ''}>
+                추가
+              </Button>
+              <Button size="sm" variant="outline" onClick={handleToggleAdding} className={keywordError ? 'mt-[26px]' : ''}>
+                취소
+              </Button>
+            </div>
+          )}
         </section>
 
         <section className="mb-8">
@@ -129,7 +172,6 @@ export default function StockDetailPage() {
                       key={signal.id}
                       signal={signal}
                       compact={false}
-                      onClick={() => setSelectedSignalId(signal.id)}
                   />
                 ))
               )}
@@ -137,63 +179,8 @@ export default function StockDetailPage() {
           )}
         </section>
 
-        <section>
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-[16px] font-semibold text-text-primary">
-              뉴스 수집 키워드
-            </h2>
-            {!isAdding && <Button size="sm" onClick={handleToggleAdding}>키워드 추가</Button>}
-          </div>
-
-          <div className="flex flex-wrap gap-2 mb-3">
-            {keywords.length === 0 ? (
-              <p className="text-[14px] text-text-muted">등록된 키워드가 없습니다</p>
-            ) : (
-              keywords.map((kw) => (
-                <span
-                  key={kw.id}
-                  className={`inline-flex items-center text-[13px] font-medium px-[10px] py-1 rounded-md border ${kw.enabled ? 'border-accent text-accent bg-[rgba(245,166,35,0.08)]' : 'border-border text-text-muted bg-transparent opacity-50'}`}
-                >
-                  {kw.keyword}
-                </span>
-              ))
-            )}
-          </div>
-
-          {isAdding && (
-            <div className="flex gap-2 items-start">
-              <div className="flex-1">
-                <Input
-                  placeholder="추가하려는 키워드 입력"
-                  value={newKeyword}
-                  onChange={(e) => {
-                    setNewKeyword(e.currentTarget.value)
-                    if (keywordError) setKeywordError('')
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') handleAddKeyword()
-                    if (e.key === 'Escape') handleToggleAdding()
-                  }}
-                  error={keywordError}
-                  autoFocus
-                />
-              </div>
-              <Button size="sm" onClick={handleAddKeyword} className={keywordError ? 'mt-[26px]' : ''}>
-                추가
-              </Button>
-              <Button size="sm" variant="outline" onClick={handleToggleAdding} className={keywordError ? 'mt-[26px]' : ''}>
-                취소
-              </Button>
-            </div>
-          )}
-        </section>
       </main>
 
-      <SignalDetailModal
-          isOpen={selectedSignalId !== null}
-          onClose={() => setSelectedSignalId(null)}
-          signalId={selectedSignalId}
-      />
     </div>
   )
 }

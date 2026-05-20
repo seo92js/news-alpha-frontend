@@ -53,41 +53,48 @@ export default function SignalDetailModal({ isOpen, onClose, signalId }: SignalD
   const { data, isLoading } = useSignalDetail(signalId!)
 
   return (
-      <Modal isOpen={isOpen} onClose={onClose} >
-        {isLoading || !data ? (
-          <p className="text-[14px] text-text-muted text-center py-6">불러오는 중...</p>
-        ) : (
-          <div className="flex flex-col gap-5">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      className="top-[72px] translate-y-0 max-h-[calc(100vh-88px)] flex flex-col gap-0 p-0 overflow-hidden sm:max-w-2xl"
+    >
+      {isLoading || !data ? (
+        <p className="text-[14px] text-text-muted text-center py-6 px-6">불러오는 중...</p>
+      ) : (
+        <>
+          {/* 고정 헤더 영역 */}
+          <div className="flex flex-col gap-5 px-6 pt-6 pb-4 flex-shrink-0">
+            <div className="flex flex-col gap-1.5">
+              <span className="inline-block px-2 py-0.5 rounded-[20px] bg-accent-glow border border-[rgba(245,166,35,0.35)] text-accent text-[11px] font-semibold w-fit">
+                {data.keyword}
+              </span>
+              <h2 className="text-[17px] font-bold text-text-primary leading-[1.4]">
+                {data.title}
+              </h2>
+            </div>
 
-          <div className="flex flex-col gap-1.5">
-            <span className="inline-block px-2 py-0.5 rounded-[20px] bg-accent-glow border border-[rgba(245,166,35,0.35)] text-accent text-[11px] font-semibold w-fit">
-              {data.keyword}
-            </span>
-            <h2 className="text-[17px] font-bold text-text-primary leading-[1.4]">
-              {data.title}
-            </h2>
+            <div className="flex items-center gap-2 flex-wrap">
+              <Badge label={data.eventTypeLabel} />
+              <Badge label={data.sentimentLabel} />
+              <span className="inline-flex items-center gap-1 text-[13px] font-bold text-accent">
+                <Zap size={12} fill="var(--color-accent)" stroke="var(--color-accent)" />
+                {data.score.toFixed(1)}
+              </span>
+              <span className="text-[12px] text-text-muted">신뢰도 {data.confidence}%</span>
+              <span className="text-[12px] text-text-muted">기사 {data.relatedNewsCount}건</span>
+            </div>
+
+            <div className="bg-[rgba(243,243,243,0.04)] border border-border rounded-xl px-4 py-3">
+              <p className="text-[13px] text-text-primary leading-[1.7]">
+                {data.investorSummary}
+              </p>
+            </div>
           </div>
 
-          <div className="flex items-center gap-2 flex-wrap">
-            <Badge label={data.eventTypeLabel} />
-            <Badge label={data.sentimentLabel} />
-            <span className="inline-flex items-center gap-1 text-[13px] font-bold text-accent">
-              <Zap size={12} fill="var(--color-accent)" stroke="var(--color-accent)" />
-              {data.score.toFixed(1)}
-            </span>
-            <span className="text-[12px] text-text-muted">신뢰도 {data.confidence}%</span>
-            <span className="text-[12px] text-text-muted">기사 {data.relatedNewsCount}건</span>
-          </div>
-
-          <div className="bg-[rgba(243,243,243,0.04)] border border-border rounded-xl px-4 py-3">
-            <p className="text-[13px] text-text-primary leading-[1.7]">
-              {data.investorSummary}
-            </p>
-          </div>
-
+          {/* 스크롤 영역 - 근거 뉴스 */}
           {data.evidences.length > 0 && (
-            <div className="flex flex-col gap-4">
-              <span className="text-[11px] font-semibold text-text-muted uppercase tracking-[0.06em]">
+            <div className="overflow-y-auto flex-1 px-6 pb-4 border-t border-border">
+              <span className="block text-[11px] font-semibold text-text-muted uppercase tracking-[0.06em] pt-4 pb-3">
                 근거 뉴스
               </span>
               <div className="flex flex-col gap-4">
@@ -98,12 +105,13 @@ export default function SignalDetailModal({ isOpen, onClose, signalId }: SignalD
             </div>
           )}
 
-          <span className="text-[11px] text-text-muted">
-            {formatDate(data.detectedAt)} 탐지
-          </span>
-
-        </div>
-        )}
-      </Modal>
+          <div className="px-6 py-3 flex-shrink-0 border-t border-border">
+            <span className="text-[11px] text-text-muted">
+              {formatDate(data.detectedAt)} 탐지
+            </span>
+          </div>
+        </>
+      )}
+    </Modal>
   )
 };
