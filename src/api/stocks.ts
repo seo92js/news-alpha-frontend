@@ -31,3 +31,6 @@ export const deleteStock = (stockId: number) : Promise<void> =>
 
 export const deleteStockKeyword = (stockId: number, keywordId: number) : Promise<void> =>
     api.delete<void>(`/stocks/${stockId}/keywords/${keywordId}`).then(r => r.data)
+
+export const fetchLatestReports = (): Promise<StockLatestReport[]> =>
+    api.get<StockLatestReport[]>('/stocks/reports/latest').then(r => r.data)
