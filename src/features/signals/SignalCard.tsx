@@ -1,6 +1,6 @@
 import type { StockSignalSummary } from '@/types/stock'
 import { Zap } from 'lucide-react'
-import { formatDate } from '@/lib/utils'
+import { formatSmartDate } from '@/lib/utils'
 
 interface SignalCardProps {
   signal: StockSignalSummary
@@ -35,7 +35,7 @@ export default function SignalCard({ signal, onClick }: SignalCardProps) {
           <span className="text-[12px] text-text-muted">기사 {signal.relatedNewsCount}건</span>
         </div>
         <span className="text-[11px] text-text-muted shrink-0">
-          {formatDate(signal.detectedAt)} 탐지
+          시그널 탐지 : {formatSmartDate(signal.detectedAt)}
         </span>
       </div>
 

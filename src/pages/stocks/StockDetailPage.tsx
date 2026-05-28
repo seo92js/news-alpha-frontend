@@ -11,7 +11,7 @@ import { useKeywords } from '@/features/stocks/useKeywords'
 import { useAddKeyword } from '@/features/stocks/useAddKeyword'
 import { useDeleteKeyword } from '@/features/stocks/useDeleteKeyword'
 import { useStockReport } from '@/features/stocks/useStockReport'
-import { formatDate } from '@/lib/utils'
+import { formatSmartDate } from '@/lib/utils'
 
 export default function StockDetailPage() {
   const { id } = useParams<{ id: string }>()
@@ -169,14 +169,12 @@ export default function StockDetailPage() {
           </h2>
           {report ? (
             <div className="bg-surface border border-border rounded-2xl p-6 flex flex-col gap-4">
-              <div className="flex items-center justify-between">
-                <span className="text-[12px] text-text-muted">{report.reportDate} 기준</span>
-                <span className="text-[12px] text-text-muted">시그널 {report.signalCount}건 반영</span>
+              <div className="flex justify-end">
+                <span className="text-[11px] text-text-muted">리포트 작성 : {formatSmartDate(report.generatedAt)}</span>
               </div>
               <p className="text-[14px] text-text-primary leading-[1.8] whitespace-pre-wrap">
                 {report.report}
               </p>
-              <span className="text-[11px] text-text-muted">{formatDate(report.generatedAt)} 생성</span>
             </div>
           ) : (
             <div className="bg-surface border border-border rounded-2xl p-6">
