@@ -3,10 +3,10 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { Trash2 } from 'lucide-react'
 import Navbar from '@/components/layout/Navbar'
 import SignalCard from '@/features/signals/SignalCard'
+import SignalDetailModal from '@/features/signals/SignalDetailModal'
 import Input from '@/components/ui/input'
 import Button from '@/components/ui/button'
 import { useStocks } from '@/features/stocks/useStocks'
-import { useSignals } from '@/features/signals/useSignals'
 import { useKeywords } from '@/features/stocks/useKeywords'
 import { useAddKeyword } from '@/features/stocks/useAddKeyword'
 import { useDeleteKeyword } from '@/features/stocks/useDeleteKeyword'
@@ -19,13 +19,13 @@ export default function StockDetailPage() {
   const navigate = useNavigate()
 
   const { data: stocks = [], isLoading } = useStocks()
-  const { data: signals = [] } = useSignals()
   const { data: keywords = [] } = useKeywords(stockId)
   const { mutate: addKeywordMutate } = useAddKeyword(stockId)
   const { mutate: deleteKeyword } = useDeleteKeyword(stockId)
   const { data: report } = useStockReport(stockId)
 
   const [signalsOpen, setSignalsOpen] = useState(true)
+  const [selectedSignalId, setSelectedSignalId] = useState<number | null>(null)
   const [isAdding, setIsAdding] = useState(false)
   const [newKeyword, setNewKeyword] = useState('')
   const [keywordError, setKeywordError] = useState('')
@@ -57,9 +57,7 @@ export default function StockDetailPage() {
     )
   }
 
-  const relatedSignals = signals.filter(signal =>
-    keywords.some(kw => kw.keyword === signal.keyword)
-  )
+  const relatedSignals = [...(report?.signals ?? [])].sort((a, b) => b.score - a.score)
 
   const handleToggleAdding = () => {
     setIsAdding((prev) => !prev)
@@ -211,9 +209,9 @@ export default function StockDetailPage() {
               ) : (
                 relatedSignals.map((signal) => (
                   <SignalCard
-                      key={signal.id}
+                      key={signal.signalId}
                       signal={signal}
-                      compact={false}
+                      onClick={() => setSelectedSignalId(signal.signalId)}
                   />
                 ))
               )}
@@ -223,6 +221,11 @@ export default function StockDetailPage() {
 
       </main>
 
+      <SignalDetailModal
+        isOpen={selectedSignalId !== null}
+        onClose={() => setSelectedSignalId(null)}
+        signalId={selectedSignalId}
+      />
     </div>
   )
 }
