@@ -3,15 +3,15 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { Trash2 } from 'lucide-react'
 import Navbar from '@/components/layout/Navbar'
 import SignalCard from '@/features/signals/SignalCard'
+import SignalDetailModal from '@/features/signals/SignalDetailModal'
 import Input from '@/components/ui/input'
 import Button from '@/components/ui/button'
 import { useStocks } from '@/features/stocks/useStocks'
-import { useSignals } from '@/features/signals/useSignals'
 import { useKeywords } from '@/features/stocks/useKeywords'
 import { useAddKeyword } from '@/features/stocks/useAddKeyword'
 import { useDeleteKeyword } from '@/features/stocks/useDeleteKeyword'
 import { useStockReport } from '@/features/stocks/useStockReport'
-import { formatDate } from '@/lib/utils'
+import { formatSmartDate } from '@/lib/utils'
 
 export default function StockDetailPage() {
   const { id } = useParams<{ id: string }>()
@@ -19,13 +19,13 @@ export default function StockDetailPage() {
   const navigate = useNavigate()
 
   const { data: stocks = [], isLoading } = useStocks()
-  const { data: signals = [] } = useSignals()
   const { data: keywords = [] } = useKeywords(stockId)
   const { mutate: addKeywordMutate } = useAddKeyword(stockId)
   const { mutate: deleteKeyword } = useDeleteKeyword(stockId)
-  const { data: report } = useStockReport(stockId)
+  const { data: report, isLoading: isReportLoading } = useStockReport(stockId)
 
   const [signalsOpen, setSignalsOpen] = useState(true)
+  const [selectedSignalId, setSelectedSignalId] = useState<number | null>(null)
   const [isAdding, setIsAdding] = useState(false)
   const [newKeyword, setNewKeyword] = useState('')
   const [keywordError, setKeywordError] = useState('')
@@ -57,9 +57,7 @@ export default function StockDetailPage() {
     )
   }
 
-  const relatedSignals = signals.filter(signal =>
-    keywords.some(kw => kw.keyword === signal.keyword)
-  )
+  const relatedSignals = [...(report?.signals ?? [])].sort((a, b) => b.score - a.score)
 
   const handleToggleAdding = () => {
     setIsAdding((prev) => !prev)
@@ -171,14 +169,12 @@ export default function StockDetailPage() {
           </h2>
           {report ? (
             <div className="bg-surface border border-border rounded-2xl p-6 flex flex-col gap-4">
-              <div className="flex items-center justify-between">
-                <span className="text-[12px] text-text-muted">{report.reportDate} 기준</span>
-                <span className="text-[12px] text-text-muted">시그널 {report.signalCount}건 반영</span>
+              <div className="flex justify-end">
+                <span className="text-[11px] text-text-muted">리포트 작성 : {formatSmartDate(report.generatedAt)}</span>
               </div>
               <p className="text-[14px] text-text-primary leading-[1.8] whitespace-pre-wrap">
                 {report.report}
               </p>
-              <span className="text-[11px] text-text-muted">{formatDate(report.generatedAt)} 생성</span>
             </div>
           ) : (
             <div className="bg-surface border border-border rounded-2xl p-6">
@@ -204,16 +200,18 @@ export default function StockDetailPage() {
 
           {signalsOpen && (
             <div className="flex flex-col gap-3">
-              {relatedSignals.length === 0 ? (
+              {isReportLoading ? (
+                <p className="text-[14px] text-text-muted text-center py-6">불러오는 중...</p>
+              ) : relatedSignals.length === 0 ? (
                 <p className="text-[14px] text-text-muted text-center py-6">
                   관련 시그널이 없습니다
                 </p>
               ) : (
                 relatedSignals.map((signal) => (
                   <SignalCard
-                      key={signal.id}
+                      key={signal.signalId}
                       signal={signal}
-                      compact={false}
+                      onClick={() => setSelectedSignalId(signal.signalId)}
                   />
                 ))
               )}
@@ -223,6 +221,11 @@ export default function StockDetailPage() {
 
       </main>
 
+      <SignalDetailModal
+        isOpen={selectedSignalId !== null}
+        onClose={() => setSelectedSignalId(null)}
+        signalId={selectedSignalId}
+      />
     </div>
   )
 }

@@ -20,3 +20,22 @@ export function formatDate(iso: string | null): string {
 
   return `${month}월 ${day}일 ${hour}:${minute}`
 }
+
+export function formatSmartDate(iso: string): string {
+
+  const date = new Date(iso)
+  const now = new Date()
+  const isToday =
+    date.getFullYear() === now.getFullYear() &&
+    date.getMonth() === now.getMonth() &&
+    date.getDate() === now.getDate()
+
+  const hour = String(date.getHours()).padStart(2, '0')
+  const minute = String(date.getMinutes()).padStart(2, '0')
+
+  if (isToday) return `${hour}:${minute}`
+
+  const month = date.getMonth() + 1
+  const day = date.getDate()
+  return `${month}월 ${day}일 ${hour}:${minute}`
+}
