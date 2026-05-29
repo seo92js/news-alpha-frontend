@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { fetchLatestReports } from '@/api/stocks'
 
-export function useTodayReports() {
+export function useLatestReports() {
   return useQuery({
     queryKey: ['stocks', 'reports', 'latest'],
     queryFn: fetchLatestReports,

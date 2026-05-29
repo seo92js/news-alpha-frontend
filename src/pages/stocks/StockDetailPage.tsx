@@ -22,7 +22,7 @@ export default function StockDetailPage() {
   const { data: keywords = [] } = useKeywords(stockId)
   const { mutate: addKeywordMutate } = useAddKeyword(stockId)
   const { mutate: deleteKeyword } = useDeleteKeyword(stockId)
-  const { data: report } = useStockReport(stockId)
+  const { data: report, isLoading: isReportLoading } = useStockReport(stockId)
 
   const [signalsOpen, setSignalsOpen] = useState(true)
   const [selectedSignalId, setSelectedSignalId] = useState<number | null>(null)
@@ -200,7 +200,9 @@ export default function StockDetailPage() {
 
           {signalsOpen && (
             <div className="flex flex-col gap-3">
-              {relatedSignals.length === 0 ? (
+              {isReportLoading ? (
+                <p className="text-[14px] text-text-muted text-center py-6">불러오는 중...</p>
+              ) : relatedSignals.length === 0 ? (
                 <p className="text-[14px] text-text-muted text-center py-6">
                   관련 시그널이 없습니다
                 </p>

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import Navbar from '@/components/layout/Navbar'
 import SignalCard from '@/features/signals/SignalCard'
 import SignalDetailModal from '@/features/signals/SignalDetailModal'
-import { useTodayReports } from '@/features/stocks/useTodayReports'
+import { useLatestReports } from '@/features/stocks/useLatestReports'
 import { formatSmartDate } from '@/lib/utils'
 import type { StockLatestReport } from '@/types/stock'
 
@@ -52,7 +52,7 @@ function StockReportCard({ report, onSignalClick }: { report: StockLatestReport;
 }
 
 export default function HomePage() {
-  const { data: reports = [], isLoading } = useTodayReports()
+  const { data: reports = [], isLoading } = useLatestReports()
   const [selectedSignalId, setSelectedSignalId] = useState<number | null>(null)
 
   return (
@@ -66,7 +66,7 @@ export default function HomePage() {
               오늘의 리포트
             </h2>
             <span className="text-[12px] font-bold text-accent bg-[rgba(245,166,35,0.12)] rounded-[20px] px-[10px] py-[2px]">
-              {reports.length}
+              {isLoading ? '-' : reports.length}
             </span>
           </div>
 
