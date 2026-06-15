@@ -4,10 +4,7 @@ import { Trash2 } from 'lucide-react'
 import { useStocks } from '@/features/stocks/useStocks'
 import { useStockMeta } from '@/features/stocks/useStockMeta'
 import { useAddStock } from '@/features/stocks/useAddStock'
-import { useAddKeyword } from '@/features/stocks/useAddKeyword'
 import { useDeleteStock } from '@/features/stocks/useDeleteStock'
-import { useDeleteKeyword } from '@/features/stocks/useDeleteKeyword'
-import { useKeywords } from '@/features/stocks/useKeywords'
 import {
   Sheet,
   SheetContent,
@@ -17,8 +14,6 @@ import {
 import { Button } from '@/components/ui/button'
 import Input from '@/components/ui/input'
 import type { StockMeta } from '@/types/stock'
-
-type Tab = 'stocks' | 'keywords'
 
 const AUTOCOMPLETE_LIMIT = 8
 
@@ -44,8 +39,7 @@ export default function StockDrawer({ isOpen, onClose }: StockDrawerProps) {
   const { data: stocks = [], isLoading } = useStocks()
   const { data: metaList = [] } = useStockMeta(isOpen)
   const { mutate: addStock, isPending: isStockPending } = useAddStock()
-
-  const [activeTab, setActiveTab] = useState<Tab>('stocks')
+  const { mutate: deleteStock } = useDeleteStock()
 
   // 종목 추가 상태
   const [stockFormOpen, setStockFormOpen] = useState(false)
@@ -56,18 +50,6 @@ export default function StockDrawer({ isOpen, onClose }: StockDrawerProps) {
   const [stockError, setStockError] = useState('')
   const metaRef = useRef<StockMeta[]>([])
   metaRef.current = metaList
-
-  // 키워드 관리 상태
-  const [selectedStockId, setSelectedStockId] = useState<number | null>(null)
-  const [keywordFormOpen, setKeywordFormOpen] = useState(false)
-  const [newKeyword, setNewKeyword] = useState('')
-  const [keywordError, setKeywordError] = useState('')
-  const { mutate: addKeyword, isPending: isKeywordPending } = useAddKeyword(selectedStockId ?? 0)
-  const { mutate: deleteKeyword } = useDeleteKeyword(selectedStockId ?? 0)
-  const { mutate: deleteStock } = useDeleteStock()
-  const { data: selectedStockKeywords = [] } = useKeywords(selectedStockId ?? 0)
-
-  const selectedStock = stocks.find((s) => s.id === selectedStockId)
 
   const handleStockClick = (id: number) => {
     onClose()
@@ -110,22 +92,6 @@ export default function StockDrawer({ isOpen, onClose }: StockDrawerProps) {
     )
   }
 
-  // 키워드 추가
-  const handleAddKeyword = () => {
-    const trimmed = newKeyword.trim()
-    if (!trimmed) return setKeywordError('키워드를 입력해주세요')
-    if (selectedStockKeywords.some((kw) => kw.keyword.toLowerCase() === trimmed.toLowerCase())) {
-      return setKeywordError('이미 등록된 키워드입니다')
-    }
-    addKeyword(
-      { keyword: trimmed },
-      {
-        onSuccess: () => { setNewKeyword(''); setKeywordFormOpen(false); setKeywordError('') },
-        onError: () => setKeywordError('키워드 추가에 실패했습니다'),
-      }
-    )
-  }
-
   return (
     <Sheet open={isOpen} onOpenChange={(open) => { if (!open) onClose() }}>
       <SheetContent side="right" className="w-[320px] sm:max-w-[320px] flex flex-col p-0" showCloseButton={false}>
@@ -136,25 +102,10 @@ export default function StockDrawer({ isOpen, onClose }: StockDrawerProps) {
           </div>
         </SheetHeader>
 
-        <div className="flex border-b border-border">
-          <button
-            onClick={() => setActiveTab('stocks')}
-            className={`flex-1 py-2.5 text-[13px] font-medium transition-colors cursor-pointer ${activeTab === 'stocks' ? 'text-text-primary border-b-2 border-accent' : 'text-text-muted hover:text-text-primary'}`}
-          >
-            종목 관리
-          </button>
-          <button
-            onClick={() => setActiveTab('keywords')}
-            className={`flex-1 py-2.5 text-[13px] font-medium transition-colors cursor-pointer ${activeTab === 'keywords' ? 'text-text-primary border-b-2 border-accent' : 'text-text-muted hover:text-text-primary'}`}
-          >
-            키워드 관리
-          </button>
-        </div>
-
         <div className="flex-1 overflow-y-auto p-4">
           {isLoading ? (
             <p className="text-[14px] text-muted-foreground text-center mt-6">불러오는 중...</p>
-          ) : activeTab === 'stocks' ? (
+          ) : (
             <div className="flex flex-col gap-3">
               <div className="flex justify-end">
                 <Button size="sm" onClick={() => { setStockFormOpen(p => !p); setQuery(''); setSelected(null); setSuggestions([]); setStockError('') }}>
@@ -218,7 +169,7 @@ export default function StockDrawer({ isOpen, onClose }: StockDrawerProps) {
                         <span className="text-[11px] text-muted-foreground">{stock.ticker} · {stock.market}</span>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className="text-[11px] text-muted-foreground">키워드 {stock.keywords.length}개</span>
+                        <span className="text-[11px] text-muted-foreground">키워드 {stock.keywords?.length ?? 0}개</span>
                         <button
                           onClick={(e) => { e.stopPropagation(); deleteStock(stock.id, { onSuccess: () => navigate('/') }) }}
                           className="text-text-muted hover:text-red-400 transition-colors cursor-pointer"
@@ -229,78 +180,6 @@ export default function StockDrawer({ isOpen, onClose }: StockDrawerProps) {
                     </div>
                   ))}
                 </div>
-              )}
-            </div>
-          ) : (
-            <div className="flex flex-col gap-3">
-              {stocks.length === 0 ? (
-                <p className="text-[14px] text-muted-foreground text-center mt-6">등록된 종목이 없습니다</p>
-              ) : (
-                <>
-                  <div className="flex flex-col gap-2">
-                    {stocks.map((stock) => (
-                      <button
-                        key={stock.id}
-                        onClick={() => { setSelectedStockId(stock.id); setKeywordFormOpen(false); setNewKeyword(''); setKeywordError('') }}
-                        className={`text-left px-4 py-2.5 rounded-[10px] border text-[14px] font-medium transition-colors cursor-pointer ${selectedStockId === stock.id ? 'border-accent text-accent bg-[rgba(245,166,35,0.08)]' : 'border-border text-text-primary hover:border-text-muted'}`}
-                      >
-                        {stock.name}
-                      </button>
-                    ))}
-                  </div>
-
-                  {selectedStock && (
-                    <div className="mt-2 flex flex-col gap-2">
-                      <div className="flex items-center justify-between">
-                        <span className="text-[11px] font-semibold text-text-muted uppercase tracking-[0.06em]">
-                          {selectedStock.name} 키워드
-                        </span>
-                        <Button size="sm" onClick={() => { setKeywordFormOpen(p => !p); setNewKeyword(''); setKeywordError('') }}>
-                          {keywordFormOpen ? '취소' : '키워드 추가'}
-                        </Button>
-                      </div>
-
-                      {keywordFormOpen && (
-                        <div className="flex gap-2 items-start">
-                          <div className="flex-1">
-                            <Input
-                              placeholder="키워드 입력"
-                              value={newKeyword}
-                              onChange={e => { setNewKeyword(e.target.value); if (keywordError) setKeywordError('') }}
-                              onKeyDown={e => { if (e.key === 'Enter') handleAddKeyword(); if (e.key === 'Escape') setKeywordFormOpen(false) }}
-                              error={keywordError}
-                              autoFocus
-                            />
-                          </div>
-                          <Button size="sm" onClick={handleAddKeyword} loading={isKeywordPending} className={keywordError ? 'mt-[26px]' : ''}>
-                            추가
-                          </Button>
-                        </div>
-                      )}
-
-                      {selectedStockKeywords.length === 0 ? (
-                        <p className="text-[14px] text-muted-foreground">등록된 키워드가 없습니다</p>
-                      ) : (
-                        <div className="flex flex-wrap gap-2">
-                          {selectedStockKeywords.map((kw) => (
-                            <span
-                              key={kw.id}
-                              className={`inline-flex items-center gap-1.5 text-[13px] font-medium px-[10px] py-1 rounded-md border ${kw.enabled ? 'border-accent text-accent bg-[rgba(245,166,35,0.08)]' : 'border-border text-text-muted bg-transparent opacity-50'}`}
-                            >
-                              {kw.keyword}
-                              <button
-                                onClick={() => deleteKeyword(kw.id)}
-                                className="hover:text-red-400 transition-colors cursor-pointer"
-                              >
-                                <Trash2 size={11} />
-                              </button>
-                            </span>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </>
               )}
             </div>
           )}
