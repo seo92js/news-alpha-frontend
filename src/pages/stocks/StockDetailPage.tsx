@@ -1,15 +1,10 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { Trash2 } from 'lucide-react'
 import Navbar from '@/components/layout/Navbar'
 import SignalCard from '@/features/signals/SignalCard'
 import SignalDetailModal from '@/features/signals/SignalDetailModal'
-import Input from '@/components/ui/input'
-import Button from '@/components/ui/button'
 import { useStocks } from '@/features/stocks/useStocks'
 import { useKeywords } from '@/features/stocks/useKeywords'
-import { useAddKeyword } from '@/features/stocks/useAddKeyword'
-import { useDeleteKeyword } from '@/features/stocks/useDeleteKeyword'
 import { useStockReport } from '@/features/stocks/useStockReport'
 import { formatSmartDate } from '@/lib/utils'
 
@@ -20,15 +15,10 @@ export default function StockDetailPage() {
 
   const { data: stocks = [], isLoading } = useStocks()
   const { data: keywords = [] } = useKeywords(stockId)
-  const { mutate: addKeywordMutate } = useAddKeyword(stockId)
-  const { mutate: deleteKeyword } = useDeleteKeyword(stockId)
   const { data: report, isLoading: isReportLoading } = useStockReport(stockId)
 
   const [signalsOpen, setSignalsOpen] = useState(true)
   const [selectedSignalId, setSelectedSignalId] = useState<number | null>(null)
-  const [isAdding, setIsAdding] = useState(false)
-  const [newKeyword, setNewKeyword] = useState('')
-  const [keywordError, setKeywordError] = useState('')
 
   const stock = stocks.find((s) => s.id === stockId)
 
@@ -59,40 +49,6 @@ export default function StockDetailPage() {
 
   const relatedSignals = [...(report?.signals ?? [])].sort((a, b) => b.score - a.score)
 
-  const handleToggleAdding = () => {
-    setIsAdding((prev) => !prev)
-    setNewKeyword('')
-    setKeywordError('')
-  }
-
-  const handleAddKeyword = () => {
-    const trimmed = newKeyword.trim()
-    if (!trimmed) {
-      setKeywordError('키워드를 입력해주세요')
-      return
-    }
-    if (keywords.some((kw) => kw.keyword.toLowerCase() === trimmed.toLowerCase())) {
-      setKeywordError('이미 등록된 키워드입니다')
-      return
-    }
-
-    setNewKeyword('')
-    setKeywordError('')
-
-    addKeywordMutate(
-      { keyword: trimmed },
-      {
-        onSuccess: () => {
-          setNewKeyword('')
-          setIsAdding(false)
-        },
-        onError: () => {
-          setKeywordError('키워드 추가에 실패했습니다')
-        },
-      }
-    )
-  }
-
   return (
     <div className="min-h-screen bg-bg">
       <Navbar />
@@ -111,7 +67,6 @@ export default function StockDetailPage() {
             <div className="flex flex-col gap-2 items-end w-3/5">
               <div className="flex items-center gap-3 pt-1">
                 <h2 className="text-[16px] font-semibold text-text-primary">뉴스 수집 키워드</h2>
-                {!isAdding && <Button size="sm" onClick={handleToggleAdding}>추가</Button>}
               </div>
               <div className="flex flex-wrap gap-2 justify-end">
                 {keywords.length === 0 ? (
@@ -123,44 +78,12 @@ export default function StockDetailPage() {
                       className={`inline-flex items-center gap-1.5 text-[13px] font-medium px-[10px] py-1 rounded-md border ${kw.enabled ? 'border-accent text-accent bg-[rgba(245,166,35,0.08)]' : 'border-border text-text-muted bg-transparent opacity-50'}`}
                     >
                       {kw.keyword}
-                      <button
-                        onClick={() => deleteKeyword(kw.id)}
-                        className="hover:text-red-400 transition-colors cursor-pointer"
-                      >
-                        <Trash2 size={11} />
-                      </button>
                     </span>
                   ))
                 )}
               </div>
             </div>
           </div>
-          {isAdding && (
-            <div className="flex gap-2 items-start mt-3">
-              <div className="flex-1">
-                <Input
-                  placeholder="추가하려는 키워드 입력"
-                  value={newKeyword}
-                  onChange={(e) => {
-                    setNewKeyword(e.currentTarget.value)
-                    if (keywordError) setKeywordError('')
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') handleAddKeyword()
-                    if (e.key === 'Escape') handleToggleAdding()
-                  }}
-                  error={keywordError}
-                  autoFocus
-                />
-              </div>
-              <Button size="sm" onClick={handleAddKeyword} className={keywordError ? 'mt-[26px]' : ''}>
-                추가
-              </Button>
-              <Button size="sm" variant="outline" onClick={handleToggleAdding} className={keywordError ? 'mt-[26px]' : ''}>
-                취소
-              </Button>
-            </div>
-          )}
         </section>
 
         <section className="mb-8">
