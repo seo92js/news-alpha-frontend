@@ -27,10 +27,6 @@ export interface StockSaveRequest {
   market: string
 }
 
-export interface StockKeywordSaveRequest {
-  keyword: string
-}
-
 export interface StockSignalSummary {
   signalId: number
   title: string
